@@ -19,7 +19,7 @@ public class Main {
         LognormalRandomGenerator lognormalRandomGenerator = new LognormalRandomGenerator();
         ParetoRandomGenerator paretoRandomGenerator = new ParetoRandomGenerator();
 
-        showBar(basicRandomGenerator);
+        showBar(normalRandomGenerator);
     }
 
     private static void showBar(IRandomGenerator generator) {
