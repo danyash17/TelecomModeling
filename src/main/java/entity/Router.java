@@ -1,16 +1,13 @@
 package entity;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class Router implements INetworkComposite {
 
     private Integer id;
     private Set<Port> ports;
-    private Map<INetworkComposite, Port> routingTable;
+    private Map<Integer, Integer> routingTable;
     private static final int PORT_NUMBER = 4;
 
     public Router(Integer id, Set<Port> ports) {
@@ -44,14 +41,42 @@ public class Router implements INetworkComposite {
         this.ports = ports;
     }
 
-    public Port getPort(int id){
+    public Port getPort(int id) {
         return ports.stream().filter(port -> port.getId().equals(id)).findAny().get();
+    }
+
+    public Map<Integer, Integer> getRoutingTable() {
+        return routingTable;
+    }
+
+    public void setRoutingTable(Map<Integer, Integer> routingTable) {
+        this.routingTable = routingTable;
     }
 
     private void initPorts(int numberOfPorts) {
         for (int i = 0; i < numberOfPorts; i++) {
             ports.add(new Port(i, this, null));
         }
+    }
+
+    public Port getPortTo(Router router) {
+        Optional<Port> temp = ports.stream().filter(port -> {
+            if (port.getConnection() != null) {
+                return port.getConnection().getTarget().getRoot().equals(router);
+            }
+            return false;
+        }).findAny();
+        return temp.isPresent() ? temp.get() : null;
+    }
+
+    public Set<Router> getNeighbors() {
+        Set<Router> routers = new HashSet<>();
+        ports.stream().forEach(port -> {
+            if (port.getConnection() != null && !routers.contains(port.getConnection().getTarget().getRoot())) {
+                routers.add((Router) port.getConnection().getTarget().getRoot());
+            }
+        });
+        return routers;
     }
 
     public void establishConnection(Integer portId, INetworkComposite node) {

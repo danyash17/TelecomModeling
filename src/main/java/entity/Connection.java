@@ -37,4 +37,8 @@ public class Connection {
     public void setCable(ICable cable) {
         this.cable = cable;
     }
+
+    public double getGbSecSpeed(){
+        return cable.getGbSecSpeed();
+    }
 }

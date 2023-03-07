@@ -1,9 +1,12 @@
 import entity.Network;
+import entity.Port;
+import entity.RipAlgorithm;
+import entity.Router;
 import generator.*;
-import util.TreePrinter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Queue;
 
 public class Simulation {
 
@@ -11,7 +14,15 @@ public class Simulation {
 
     public static void main(String[] args) {
         Network network = new Network();
-        TreePrinter.printTree(network.getNodes());
+        List<Router> routers = new ArrayList<>();
+        network.getNodes().forEach(node -> routers.add((Router) node));
+        RipAlgorithm ripAlgorithm = new RipAlgorithm(routers);
+        ripAlgorithm.run();
+        List<Queue<Port>> list = new ArrayList<>();
+        for (Router r:routers) {
+            list.add(ripAlgorithm.getPacketRoute(routers.get(1),r));
+        }
+//        Queue<Port> q = ripAlgorithm.getPacketRoute(routers.get(1),routers.get(5));
     }
 
 //    public static void main(String[] args) {

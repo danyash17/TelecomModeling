@@ -40,10 +40,8 @@ public class Port {
 
     public void establishConnection(Port port, ICable cable) {
         this.connection = new Connection(this, port, cable);
-        //full-duplex
-        if (port.getConnection() != null && port.getConnection().getTarget() != null && !port.getConnection().getTarget().equals(this)) {
+        if (port.getConnection() == null)
             port.establishConnection(this, cable);
-        }
     }
 
 }
