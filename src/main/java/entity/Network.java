@@ -3,17 +3,21 @@ package entity;
 import entity.cable.Cat7TwistedPair;
 import entity.cable.OpticalFiberCable;
 import entity.routing.INetworkLayerRoutingProtocol;
-import entity.routing.IRoutingProtocol;
 import entity.routing.RipAlgorithm;
-import entity.thread.DatagramThread;
+import entity.thread.DatagramRunnable;
 import util.RouteCostCalculator;
 
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class Network {
 
+    private static final int ACTIVE_USERS = 10;
+
     private Set<INetworkComposite> nodes;
     private Set<INetworkLayerRoutingProtocol> routingProtocols;
+    private static final ExecutorService executorService = Executors.newFixedThreadPool(ACTIVE_USERS);
 
     public Network() {
         nodes = new HashSet<>();
@@ -33,11 +37,11 @@ public class Network {
     }
 
     public void route(Packet packet, INetworkComposite source, INetworkComposite target){
-        Map<Integer, Queue<Port>> routeMap = new HashMap<>();
+        Map<Integer, Deque<Port>> routeMap = new HashMap<>();
         Map<Integer, INetworkLayerRoutingProtocol> routeTtls = new HashMap<>();
         for (INetworkLayerRoutingProtocol protocol: routingProtocols){
             if (source instanceof Router && target instanceof Router){
-                Queue<Port> currentRoute = protocol.route((Router) source, (Router) target);
+                Deque<Port> currentRoute = protocol.route((Router) source, (Router) target);
                 int cost = RouteCostCalculator.calculateCost(currentRoute);
                 routeMap.put(cost, currentRoute);
                 routeTtls.put(cost, protocol);
@@ -46,8 +50,8 @@ public class Network {
         int minCost = routeMap.keySet().stream().min(Integer::compare).get();
         packet.setTtl(routeTtls.get(minCost).getTtl());
         packet.setRoute(routeMap.get(minCost));
-        DatagramThread thread = new DatagramThread(packet);
-        thread.start();
+        DatagramRunnable datagramRunnable = new DatagramRunnable(packet);
+        executorService.submit(datagramRunnable);
     }
 
     public Set<INetworkComposite> getNodes() {

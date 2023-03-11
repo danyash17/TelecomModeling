@@ -51,15 +51,15 @@ public class RipAlgorithm implements INetworkLayerRoutingProtocol{
         return distances;
     }
 
-    public Queue<Port> route(Router source, Router target) {
+    public Deque<Port> route(Router source, Router target) {
         if(source.equals(target)) {
             return new ArrayDeque<>();
         }
-        Queue<Port> bestQueue = new ArrayDeque<>();
-        Queue<Port> initQueue = new ArrayDeque<>();
-        Map<Integer, Queue<Port>> bestQueues = new HashMap<>();
+        Deque<Port> bestQueue = new ArrayDeque<>();
+        Deque<Port> initQueue = new ArrayDeque<>();
+        Map<Integer, Deque<Port>> bestQueues = new HashMap<>();
         findBestPath(source, target, bestQueue, bestQueues, initQueue, 0);
-        Optional<Map.Entry<Integer, Queue<Port>>> portQueue = bestQueues.entrySet().stream().min(Map.Entry.comparingByKey());
+        Optional<Map.Entry<Integer, Deque<Port>>> portQueue = bestQueues.entrySet().stream().min(Map.Entry.comparingByKey());
         return portQueue.isPresent() ? portQueue.get().getValue() : null;
     }
 
@@ -69,9 +69,9 @@ public class RipAlgorithm implements INetworkLayerRoutingProtocol{
     }
 
 
-    private void findBestPath(Router source, Router target, Queue<Port> bestQueue, Map<Integer, Queue<Port>> bestQueues, Queue<Port> legacyQueue, Integer hops) {
+    private void findBestPath(Router source, Router target, Deque<Port> bestQueue, Map<Integer, Deque<Port>> bestQueues, Deque<Port> legacyQueue, Integer hops) {
         for (Port port : source.getPorts()) {
-            Queue<Port> currentQueue = new ArrayDeque<>(legacyQueue);
+            Deque<Port> currentQueue = new ArrayDeque<>(legacyQueue);
             Integer currentHops = hops++;
             if (currentHops == HOP_LIMIT) {
                 return;

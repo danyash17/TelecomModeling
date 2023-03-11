@@ -1,12 +1,13 @@
 package entity;
 
 import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.Queue;
 import java.util.UUID;
 
 public class Packet {
     private String id;
-    private volatile Queue<Port> route;
+    private volatile Deque<Port> route;
     private boolean arrived;
     private String data;
     private long ttl;
@@ -18,11 +19,11 @@ public class Packet {
         this.route = new ArrayDeque<>();
     }
 
-    public Queue<Port> getRoute() {
+    public Deque<Port> getRoute() {
         return route;
     }
 
-    public void setRoute(Queue<Port> route) {
+    public void setRoute(Deque<Port> route) {
         this.route = route;
     }
 

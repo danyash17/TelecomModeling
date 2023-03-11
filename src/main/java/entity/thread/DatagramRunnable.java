@@ -1,25 +1,24 @@
 package entity.thread;
 
-import entity.Connection;
 import entity.Packet;
 import entity.Port;
 
-import java.util.Queue;
+import static java.lang.Thread.sleep;
 
-public class DatagramThread extends Thread{
+public class DatagramRunnable implements Runnable{
 
     private final long UPDATE_PAUSE = 1000;
     private Packet packet;
 
-    public DatagramThread(Packet packet){
+    public DatagramRunnable(Packet packet){
         this.packet = packet;
     }
 
     @Override
-    public synchronized void start() {
+    public void run() {
         Port start = packet.getRoute().poll();
-        Port end = packet.getRoute().peek();
-        System.out.println(packet + " is starting its route from " + start.getRoot() + " to " + end.getRoot());
+        Port end = packet.getRoute().peekLast();
+        System.out.println(packet + " is starting its route from " + start.getRoot() + " to " + end.getConnection().getTarget().getRoot());
         start.getConnection().transfer(packet);
         long startTime = System.currentTimeMillis();
         long time;
@@ -34,6 +33,6 @@ public class DatagramThread extends Thread{
                 e.printStackTrace();
             }
         }
-        System.out.println(packet + " finished its route from " + start.getRoot() + " to " + end);
+        System.out.println(packet + " finished its route from " + start.getRoot() + " to " + end.getConnection().getTarget().getRoot());
     }
 }
