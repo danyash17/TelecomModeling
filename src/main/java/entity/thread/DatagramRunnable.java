@@ -7,7 +7,7 @@ import static java.lang.Thread.sleep;
 
 public class DatagramRunnable implements Runnable{
 
-    private final long UPDATE_PAUSE = 1000;
+    private final long UPDATE_PAUSE = 500;
     private Packet packet;
 
     public DatagramRunnable(Packet packet){

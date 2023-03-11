@@ -8,8 +8,8 @@ import java.util.stream.Collectors;
 
 public class RipAlgorithm implements INetworkLayerRoutingProtocol{
     private List<Router> components;
-    private static final int HOP_LIMIT = 16;
-    private static final int TTL = 60000;
+    private static final int HOP_LIMIT = 32;
+    private static final int TTL = 10000;
 
     public RipAlgorithm(List<Router> components) {
         this.components = components;

@@ -13,7 +13,7 @@ import java.util.concurrent.Executors;
 
 public class Network {
 
-    private static final int ACTIVE_USERS = 10;
+    private static final int ACTIVE_USERS = 5;
 
     private Set<INetworkComposite> nodes;
     private Set<INetworkLayerRoutingProtocol> routingProtocols;
@@ -62,7 +62,7 @@ public class Network {
         this.nodes = nodes;
     }
 
-    private void initNetworkStructure(){
+    private void initNetworkStructure() {
         Router r0 = new Router(0);
         Router r1 = new Router(1);
         Router r2 = new Router(2);
@@ -72,7 +72,60 @@ public class Network {
         Router r6 = new Router(6);
         Router r7 = new Router(7);
         Router r8 = new Router(8);
-        nodes.addAll(Arrays.asList(r0,r1,r2,r3,r4,r5,r6,r7,r8));
+        Router r9 = new Router(9);
+        Router r10 = new Router(10);
+        Router r11 = new Router(11);
+        Router r12 = new Router(12);
+        Router r13 = new Router(13);
+        Router r14 = new Router(14);
+        Router r15 = new Router(15);
+        Router r16 = new Router(16);
+        Router r17 = new Router(17);
+        Router r18 = new Router(18);
+        nodes.addAll(Arrays.asList(r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13, r14, r15, r16, r17, r18));
+        ///18
+        Port r18_0 = r18.getPort(0);
+        ///17
+        Port r17_0 = r17.getPort(0);
+        Port r17_1 = r17.getPort(1);
+        r17_1.establishConnection(r18_0, new Cat7TwistedPair());
+        ///16
+        Port r16_0 = r16.getPort(0);
+        Port r16_1 = r16.getPort(1);
+        Port r6_2 = r6.getPort(2);
+        r16_0.establishConnection(r6_2, new OpticalFiberCable());
+        r16_1.establishConnection(r17_0, new Cat7TwistedPair());
+        ///15
+        Port r15_0 = r15.getPort(0);
+        ///14
+        Port r14_0 = r14.getPort(0);
+        Port r14_1 = r14.getPort(1);
+        Port r14_2 = r14.getPort(2);
+        Port r3_1 = r3.getPort(1);;
+        r14_0.establishConnection(r3_1, new OpticalFiberCable());
+        r14_1.establishConnection(r15_0, new Cat7TwistedPair());
+        ///13
+        Port r13_0 = r13.getPort(0);
+        Port r13_1 = r13.getPort(1);
+        Port r13_2 = r13.getPort(2);
+        r13_0.establishConnection(r14_2, new Cat7TwistedPair());
+        ///12
+        Port r12_0 = r12.getPort(0);
+        Port r12_1 = r12.getPort(1);
+        r12_0.establishConnection(r13_1, new Cat7TwistedPair());
+        ///11
+        Port r11_0 = r11.getPort(0);
+        Port r11_1 = r11.getPort(1);
+        Port r11_2 = r11.getPort(2);
+        Port r11_3 = r11.getPort(3);
+        r11_0.establishConnection(r13_2, new OpticalFiberCable());
+        r11_1.establishConnection(r12_1, new OpticalFiberCable());
+        ///10
+        Port r10_0 = r10.getPort(0);
+        r10_0.establishConnection(r11_3, new Cat7TwistedPair());
+        ///9
+        Port r9_0 = r9.getPort(0);
+        r9_0.establishConnection(r11_2, new OpticalFiberCable());
         ///8
         Port r8_0 = r8.getPort(0);
         Port r8_1 = r8.getPort(1);

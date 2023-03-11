@@ -12,7 +12,7 @@ public class Simulation {
 
     //5 mins
     private static final long DEFAULT_TTL = 300000;
-    private static final long DEFAULT_STOP = 100;
+    private static final long DEFAULT_STOP = 30;
     private static IRandomGenerator generator;
     private static List<Router> routers;
 
@@ -21,19 +21,11 @@ public class Simulation {
         routers = new ArrayList<>();
         network.getNodes().forEach(node -> routers.add((Router) node));
         List<Router> copy = new ArrayList<>(routers);
-        Scanner scanner = new Scanner(System.in);
         int stop = 0;
-        while (true) {
+        boolean active = true;
+        while (active) {
             if (stop > DEFAULT_STOP){
-                System.out.println("Print Y to continue...");
-                String input = scanner.nextLine();
-                if (input.equals("Y")) {
-                    stop = 0;
-                    continue;
-                }
-                else {
-                    break;
-                }
+                active = false;
             }
             Packet packet = new Packet("Message", DEFAULT_TTL);
             Collections.shuffle(copy);
