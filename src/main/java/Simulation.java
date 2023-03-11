@@ -1,6 +1,7 @@
 import entity.Network;
+import entity.Packet;
 import entity.Port;
-import entity.RipAlgorithm;
+import entity.routing.RipAlgorithm;
 import entity.Router;
 import generator.*;
 
@@ -10,19 +11,21 @@ import java.util.Queue;
 
 public class Simulation {
 
+    //5 mins
+    private static final long DEFAULT_TTL = 300000;
     private static IRandomGenerator generator;
+    private static List<Router> routers;
 
     public static void main(String[] args) {
         Network network = new Network();
-        List<Router> routers = new ArrayList<>();
+        routers = new ArrayList<>();
         network.getNodes().forEach(node -> routers.add((Router) node));
-        RipAlgorithm ripAlgorithm = new RipAlgorithm(routers);
-        ripAlgorithm.run();
-        List<Queue<Port>> list = new ArrayList<>();
-        for (Router r:routers) {
-            list.add(ripAlgorithm.getPacketRoute(routers.get(1),r));
-        }
-//        Queue<Port> q = ripAlgorithm.getPacketRoute(routers.get(1),routers.get(5));
+        Packet packet = new Packet("Message", DEFAULT_TTL);
+        network.route(packet, getRouterById(0), getRouterById(8));
+    }
+
+    private static Router getRouterById(int id){
+        return routers.stream().filter(router -> router.getId().equals(id)).findAny().get();
     }
 
 //    public static void main(String[] args) {

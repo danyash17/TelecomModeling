@@ -1,18 +1,22 @@
-package entity;
+package entity.routing;
+
+import entity.Port;
+import entity.Router;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class RipAlgorithm {
+public class RipAlgorithm implements INetworkLayerRoutingProtocol{
     private List<Router> components;
     private static final int HOP_LIMIT = 16;
+    private static final int TTL = 60000;
 
     public RipAlgorithm(List<Router> components) {
         this.components = components;
         initializeRoutingTables();
     }
 
-    public void run() {
+    public void converge() {
         boolean converged = false;
         while (!converged) {
             converged = true;
@@ -32,6 +36,7 @@ public class RipAlgorithm {
             routingTable.put(component.getId(), 0);
             component.setRoutingTable(routingTable);
         }
+        converge();
     }
 
     private Map<Integer, Integer> calculateDistances(Router component) {
@@ -46,7 +51,10 @@ public class RipAlgorithm {
         return distances;
     }
 
-    public Queue<Port> getPacketRoute(Router source, Router target) {
+    public Queue<Port> route(Router source, Router target) {
+        if(source.equals(target)) {
+            return new ArrayDeque<>();
+        }
         Queue<Port> bestQueue = new ArrayDeque<>();
         Queue<Port> initQueue = new ArrayDeque<>();
         Map<Integer, Queue<Port>> bestQueues = new HashMap<>();
@@ -54,6 +62,12 @@ public class RipAlgorithm {
         Optional<Map.Entry<Integer, Queue<Port>>> portQueue = bestQueues.entrySet().stream().min(Map.Entry.comparingByKey());
         return portQueue.isPresent() ? portQueue.get().getValue() : null;
     }
+
+    @Override
+    public long getTtl() {
+        return TTL;
+    }
+
 
     private void findBestPath(Router source, Router target, Queue<Port> bestQueue, Map<Integer, Queue<Port>> bestQueues, Queue<Port> legacyQueue, Integer hops) {
         for (Port port : source.getPorts()) {

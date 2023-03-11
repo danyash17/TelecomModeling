@@ -2,18 +2,52 @@ package entity;
 
 import entity.cable.Cat7TwistedPair;
 import entity.cable.OpticalFiberCable;
+import entity.routing.INetworkLayerRoutingProtocol;
+import entity.routing.IRoutingProtocol;
+import entity.routing.RipAlgorithm;
+import entity.thread.DatagramThread;
+import util.RouteCostCalculator;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 public class Network {
 
     private Set<INetworkComposite> nodes;
+    private Set<INetworkLayerRoutingProtocol> routingProtocols;
 
     public Network() {
         nodes = new HashSet<>();
+        routingProtocols = new HashSet<>();
         initNetworkStructure();
+        routingProtocols.add(new RipAlgorithm(getRouterNodes()));
+    }
+
+    private List<Router> getRouterNodes(){
+        List<Router> routers = new ArrayList<>();
+        for (INetworkComposite node : nodes) {
+            if (node instanceof Router) {
+                routers.add((Router) node);
+            }
+        }
+        return routers;
+    }
+
+    public void route(Packet packet, INetworkComposite source, INetworkComposite target){
+        Map<Integer, Queue<Port>> routeMap = new HashMap<>();
+        Map<Integer, INetworkLayerRoutingProtocol> routeTtls = new HashMap<>();
+        for (INetworkLayerRoutingProtocol protocol: routingProtocols){
+            if (source instanceof Router && target instanceof Router){
+                Queue<Port> currentRoute = protocol.route((Router) source, (Router) target);
+                int cost = RouteCostCalculator.calculateCost(currentRoute);
+                routeMap.put(cost, currentRoute);
+                routeTtls.put(cost, protocol);
+            }
+        }
+        int minCost = routeMap.keySet().stream().min(Integer::compare).get();
+        packet.setTtl(routeTtls.get(minCost).getTtl());
+        packet.setRoute(routeMap.get(minCost));
+        DatagramThread thread = new DatagramThread(packet);
+        thread.start();
     }
 
     public Set<INetworkComposite> getNodes() {

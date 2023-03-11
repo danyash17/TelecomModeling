@@ -93,13 +93,18 @@ public class Router implements INetworkComposite {
     }
 
     @Override
-    public void sendData() {
-
+    public void send(Packet packet) {
+        packet.getRoute().poll().getConnection().transfer(packet);
     }
 
     @Override
-    public void recieveData() {
-
+    public void receive(Packet packet) {
+        System.out.println(packet + " arrived to " + this);
+        if(packet.getRoute().isEmpty()){
+            packet.setArrived(true);
+            return;
+        }
+        send(packet);
     }
 
     @Override

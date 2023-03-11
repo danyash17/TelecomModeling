@@ -4,6 +4,7 @@ import entity.cable.ICable;
 
 public class Connection {
 
+    private static final int MOCK_BEST_TRANSFER_TIME = 100;
     private Port source;
     private Port target;
     private ICable cable;
@@ -40,5 +41,14 @@ public class Connection {
 
     public double getGbSecSpeed(){
         return cable.getGbSecSpeed();
+    }
+
+    public void transfer(Packet packet) {
+        try {
+            Thread.sleep((long) (MOCK_BEST_TRANSFER_TIME - getGbSecSpeed()));
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        target.recieve(packet);
     }
 }

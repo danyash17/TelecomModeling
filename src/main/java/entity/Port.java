@@ -44,4 +44,7 @@ public class Port {
             port.establishConnection(this, cable);
     }
 
+    public void recieve(Packet packet) {
+        root.receive(packet);
+    }
 }

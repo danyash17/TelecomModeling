@@ -5,6 +5,6 @@ import java.util.Set;
 public interface INetworkComposite {
     Integer getId();
     Set<Port> getPorts();
-    void sendData();
-    void recieveData();
+    void send(Packet packet);
+    void receive(Packet packet);
 }
