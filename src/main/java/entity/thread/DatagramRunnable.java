@@ -25,7 +25,7 @@ public class DatagramRunnable implements Runnable{
         while (!packet.isArrived()){
             time = System.currentTimeMillis() - startTime;
             if (time > packet.getTtl()){
-                throw new ThreadDeath();
+                throw new RuntimeException();
             }
             try {
                 sleep(UPDATE_PAUSE);

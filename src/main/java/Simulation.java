@@ -5,23 +5,41 @@ import entity.routing.RipAlgorithm;
 import entity.Router;
 import generator.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Queue;
+import java.io.IOException;
+import java.util.*;
 
 public class Simulation {
 
     //5 mins
     private static final long DEFAULT_TTL = 300000;
+    private static final long DEFAULT_STOP = 100;
     private static IRandomGenerator generator;
     private static List<Router> routers;
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         Network network = new Network();
         routers = new ArrayList<>();
         network.getNodes().forEach(node -> routers.add((Router) node));
-        Packet packet = new Packet("Message", DEFAULT_TTL);
-        network.route(packet, getRouterById(0), getRouterById(8));
+        List<Router> copy = new ArrayList<>(routers);
+        Scanner scanner = new Scanner(System.in);
+        int stop = 0;
+        while (true) {
+            if (stop > DEFAULT_STOP){
+                System.out.println("Print Y to continue...");
+                String input = scanner.nextLine();
+                if (input.equals("Y")) {
+                    stop = 0;
+                    continue;
+                }
+                else {
+                    break;
+                }
+            }
+            Packet packet = new Packet("Message", DEFAULT_TTL);
+            Collections.shuffle(copy);
+            network.route(packet, copy.get(0), copy.get(1));
+            stop++;
+        }
     }
 
     private static Router getRouterById(int id){
