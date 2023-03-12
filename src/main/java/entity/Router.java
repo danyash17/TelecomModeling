@@ -2,6 +2,7 @@ package entity;
 
 import generator.ExponentialRandomGenerator;
 import generator.IRandomGenerator;
+import generator.WeibullRandomGenerator;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
@@ -15,15 +16,20 @@ public class Router implements INetworkComposite {
     private boolean crashed;
     private IRandomGenerator generator;
     private double durability;
+    private long meanTimeToFailure;
+    private long workingTime;
     private static final int PORT_NUMBER = 4;
     private static final double DEFAULT_DURABILITY = 0.8;
+    private static final long DEFAULT_MTTF = 120_000;
 
     public Router(Integer id) {
         this.id = id;
         this.ports = new HashSet<>();
         this.routingTable = new HashMap<>();
-        this.generator = new ExponentialRandomGenerator();
+        this.generator = new WeibullRandomGenerator();
         durability = DEFAULT_DURABILITY;
+        meanTimeToFailure = DEFAULT_MTTF;
+        workingTime = System.currentTimeMillis();
         initPorts(PORT_NUMBER);
     }
 
@@ -104,13 +110,23 @@ public class Router implements INetworkComposite {
     }
 
     public boolean simulateCrashChance() {
+        long time = System.currentTimeMillis();
         double chance = generator.generate();
-        if (chance > durability) {
+        if (mttfCrash(time, chance)) {
             crash();
             return true;
         }
         return false;
     }
+
+    private boolean mttfCrash(long time, double chance) {
+        return chance + ((double) (time - workingTime) / (double) meanTimeToFailure) > durability;
+    }
+
+    private boolean nonMttfCrash(long time, double chance){
+        return chance > durability;
+    }
+
 
     public void crash() {
         crashed = true;
