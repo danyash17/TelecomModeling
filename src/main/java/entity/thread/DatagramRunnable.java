@@ -25,7 +25,7 @@ public class DatagramRunnable implements Runnable{
         while (!packet.isArrived()){
             time = System.currentTimeMillis() - startTime;
             if (time > packet.getTtl()){
-                throw new RuntimeException();
+                System.out.println(packet + " is LOST having transfered from " + start.getRoot() + " to " + end.getConnection().getTarget().getRoot());
             }
             try {
                 sleep(UPDATE_PAUSE);

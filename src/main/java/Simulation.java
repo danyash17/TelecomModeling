@@ -12,7 +12,7 @@ public class Simulation {
 
     //5 mins
     private static final long DEFAULT_TTL = 300000;
-    private static final long DEFAULT_STOP = 30;
+    private static final long DEFAULT_STOP = 300;
     private static IRandomGenerator generator;
     private static List<Router> routers;
 

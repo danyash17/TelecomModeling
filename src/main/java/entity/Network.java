@@ -13,7 +13,7 @@ import java.util.concurrent.Executors;
 
 public class Network {
 
-    private static final int ACTIVE_USERS = 5;
+    private static final int ACTIVE_USERS = 3;
 
     private Set<INetworkComposite> nodes;
     private Set<INetworkLayerRoutingProtocol> routingProtocols;

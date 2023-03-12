@@ -2,12 +2,15 @@ package generator;
 
 import java.util.Random;
 
-public class ExponentialRandomGenerator implements IRandomGenerator{
+public class ExponentialRandomGenerator implements IRandomGenerator {
     @Override
-    public int generate() {
-        double lambda = 0.001; // rate parameter of the exponential distribution
+    public double generate() {
+        double temp = 0.000000001; // bigger chance
+        double lambda = 0.000000003; // rate parameter of the exponential distribution
         Random rand = new Random();
         double randomNum = -Math.log(1 - rand.nextDouble()) / lambda;
-        return (int) randomNum;
+        randomNum /= Integer.MAX_VALUE;
+        randomNum %= 1.0;
+        return randomNum;
     }
 }

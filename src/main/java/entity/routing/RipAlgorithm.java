@@ -43,6 +43,9 @@ public class RipAlgorithm implements INetworkLayerRoutingProtocol{
         Map<Integer, Integer> distances = new HashMap<>();
         for (Router neighbor : component.getNeighbors()) {
             for (int destId : neighbor.getRoutingTable().keySet()) {
+                if (neighbor.isCrashed()){
+                    continue;
+                }
                 int distance = (int) (neighbor.getRoutingTable().get(destId) + neighbor.getPortTo(component).getConnection().getGbSecSpeed());
                 distances.put(destId, Math.min(distances.getOrDefault(destId, Integer.MAX_VALUE), distance));
             }

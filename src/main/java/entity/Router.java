@@ -1,26 +1,29 @@
 package entity;
 
+import generator.ExponentialRandomGenerator;
+import generator.IRandomGenerator;
+
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.IntStream;
 
 public class Router implements INetworkComposite {
 
     private Integer id;
     private Set<Port> ports;
     private Map<Integer, Integer> routingTable;
+    private boolean crashed;
+    private IRandomGenerator generator;
+    private double durability;
     private static final int PORT_NUMBER = 4;
-
-    public Router(Integer id, Set<Port> ports) {
-        this.id = id;
-        this.ports = ports;
-        this.routingTable = new HashMap<>();
-        initPorts(PORT_NUMBER);
-    }
+    private static final double DEFAULT_DURABILITY = 0.8;
 
     public Router(Integer id) {
         this.id = id;
         this.ports = new HashSet<>();
         this.routingTable = new HashMap<>();
+        this.generator = new ExponentialRandomGenerator();
+        durability = DEFAULT_DURABILITY;
         initPorts(PORT_NUMBER);
     }
 
@@ -51,6 +54,14 @@ public class Router implements INetworkComposite {
 
     public void setRoutingTable(Map<Integer, Integer> routingTable) {
         this.routingTable = routingTable;
+    }
+
+    public boolean isCrashed() {
+        return crashed;
+    }
+
+    public void setCrashed(boolean crashed) {
+        this.crashed = crashed;
     }
 
     private void initPorts(int numberOfPorts) {
@@ -92,15 +103,34 @@ public class Router implements INetworkComposite {
         }
     }
 
+    public boolean simulateCrashChance() {
+        double chance = generator.generate();
+        if (chance > durability) {
+            crash();
+            return true;
+        }
+        return false;
+    }
+
+    public void crash() {
+        crashed = true;
+    }
+
     @Override
     public void send(Packet packet) {
+        if (simulateCrashChance()) {
+            return;
+        }
         packet.getRoute().poll().getConnection().transfer(packet);
     }
 
     @Override
     public void receive(Packet packet) {
+        if (simulateCrashChance()) {
+            return;
+        }
         System.out.println(packet + " arrived to " + this);
-        if(packet.getRoute().isEmpty()){
+        if (packet.getRoute().isEmpty()) {
             packet.setArrived(true);
             return;
         }
