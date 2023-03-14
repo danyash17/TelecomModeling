@@ -26,7 +26,7 @@ public class Router implements INetworkComposite {
         this.id = id;
         this.ports = new HashSet<>();
         this.routingTable = new HashMap<>();
-        this.generator = new WeibullRandomGenerator();
+        this.generator = new ExponentialRandomGenerator();
         durability = DEFAULT_DURABILITY;
         meanTimeToFailure = DEFAULT_MTTF;
         workingTime = System.currentTimeMillis();
@@ -109,10 +109,14 @@ public class Router implements INetworkComposite {
         }
     }
 
+    public int getLoad(){
+        return ports.stream().mapToInt(Port::getPacketsRecieved).sum();
+    }
+
     public boolean simulateCrashChance() {
         long time = System.currentTimeMillis();
         double chance = generator.generate();
-        if (mttfCrash(time, chance)) {
+        if (nonMttfCrash(time, chance)) {
             crash();
             return true;
         }

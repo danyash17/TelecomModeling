@@ -8,10 +8,13 @@ public class Port {
     private INetworkComposite root;
     private Connection connection;
 
+    private int packetsRecieved;
+
     public Port(Integer id, INetworkComposite root, Connection connection) {
         this.id = id;
         this.root = root;
         this.connection = connection;
+        this.packetsRecieved = 0;
     }
 
     public Connection getConnection() {
@@ -38,6 +41,14 @@ public class Port {
         this.root = root;
     }
 
+    public int getPacketsRecieved() {
+        return packetsRecieved;
+    }
+
+    public void setPacketsRecieved(int packetsRecieved) {
+        this.packetsRecieved = packetsRecieved;
+    }
+
     public void establishConnection(Port port, ICable cable) {
         this.connection = new Connection(this, port, cable);
         if (port.getConnection() == null)
@@ -45,6 +56,7 @@ public class Port {
     }
 
     public void recieve(Packet packet) {
+        packetsRecieved++;
         root.receive(packet);
     }
 }

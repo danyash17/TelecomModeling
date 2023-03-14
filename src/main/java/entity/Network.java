@@ -5,6 +5,7 @@ import entity.cable.OpticalFiberCable;
 import entity.routing.INetworkLayerRoutingProtocol;
 import entity.routing.RipAlgorithm;
 import entity.thread.DatagramRunnable;
+import generator.PoissonRandomGenerator;
 import util.RouteCostCalculator;
 
 import java.util.*;
@@ -13,17 +14,16 @@ import java.util.concurrent.Executors;
 
 public class Network {
 
-    private static final int ACTIVE_USERS = 3;
-
     private Set<INetworkComposite> nodes;
     private Set<INetworkLayerRoutingProtocol> routingProtocols;
-    private static final ExecutorService executorService = Executors.newFixedThreadPool(ACTIVE_USERS);
+    private ExecutorService executorService;
 
     public Network() {
         nodes = new HashSet<>();
         routingProtocols = new HashSet<>();
         initNetworkStructure();
         routingProtocols.add(new RipAlgorithm(getRouterNodes()));
+        executorService = Executors.newFixedThreadPool((int) (new PoissonRandomGenerator().generate()+1));
     }
 
     private List<Router> getRouterNodes(){

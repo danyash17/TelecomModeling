@@ -13,6 +13,9 @@ public class RouteCostCalculator {
     }
 
     public static int calculateCost(Queue<Port> route){
+        if (route==null){
+            return Integer.MAX_VALUE;
+        }
         return route.stream().mapToInt(port -> (int) (getMaxSpeed() - port.getConnection().getGbSecSpeed())).sum();
     }
 
