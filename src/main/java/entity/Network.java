@@ -2,7 +2,9 @@ package entity;
 
 import entity.cable.Cat7TwistedPair;
 import entity.cable.OpticalFiberCable;
+import entity.routing.AdvancedRipAlgorithm;
 import entity.routing.INetworkLayerRoutingProtocol;
+import entity.routing.IRoutingProtocol;
 import entity.routing.RipAlgorithm;
 import entity.thread.DatagramRunnable;
 import generator.PoissonRandomGenerator;
@@ -26,7 +28,15 @@ public class Network {
         executorService = Executors.newFixedThreadPool((int) (new PoissonRandomGenerator().generate()+1));
     }
 
-    private List<Router> getRouterNodes(){
+    public Network(Map<Router, Integer> map) {
+        nodes = new HashSet<>();
+        routingProtocols = new HashSet<>();
+        initNetworkStructure();
+        routingProtocols.add(new AdvancedRipAlgorithm(getRouterNodes(), map));
+        executorService = Executors.newFixedThreadPool((int) (new PoissonRandomGenerator().generate()+1));
+    }
+
+    public List<Router> getRouterNodes(){
         List<Router> routers = new ArrayList<>();
         for (INetworkComposite node : nodes) {
             if (node instanceof Router) {
@@ -60,6 +70,14 @@ public class Network {
 
     public void setNodes(Set<INetworkComposite> nodes) {
         this.nodes = nodes;
+    }
+
+    public Set<INetworkLayerRoutingProtocol> getRoutingProtocols() {
+        return routingProtocols;
+    }
+
+    public void setRoutingProtocols(Set<INetworkLayerRoutingProtocol> routingProtocols) {
+        this.routingProtocols = routingProtocols;
     }
 
     private void initNetworkStructure() {

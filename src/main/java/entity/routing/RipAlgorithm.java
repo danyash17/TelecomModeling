@@ -2,18 +2,23 @@ package entity.routing;
 
 import entity.Port;
 import entity.Router;
+import entity.cable.OpticalFiberCable;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class RipAlgorithm implements INetworkLayerRoutingProtocol{
-    private List<Router> components;
+    protected List<Router> components;
     private static final int HOP_LIMIT = 32;
     private static final int TTL = 10000;
+    private static final double GB_MAX_SPEED = OpticalFiberCable.GB_SEC_SPEED;
 
     public RipAlgorithm(List<Router> components) {
         this.components = components;
         initializeRoutingTables();
+    }
+
+    public RipAlgorithm() {
     }
 
     public void converge() {
@@ -30,7 +35,7 @@ public class RipAlgorithm implements INetworkLayerRoutingProtocol{
         }
     }
 
-    private void initializeRoutingTables() {
+    protected void initializeRoutingTables() {
         for (Router component : components) {
             Map<Integer, Integer> routingTable = new HashMap<>();
             routingTable.put(component.getId(), 0);
@@ -39,14 +44,14 @@ public class RipAlgorithm implements INetworkLayerRoutingProtocol{
         converge();
     }
 
-    private Map<Integer, Integer> calculateDistances(Router component) {
+    protected Map<Integer, Integer> calculateDistances(Router component) {
         Map<Integer, Integer> distances = new HashMap<>();
         for (Router neighbor : component.getNeighbors()) {
             for (int destId : neighbor.getRoutingTable().keySet()) {
                 if (neighbor.isCrashed()){
                     continue;
                 }
-                int distance = (int) (neighbor.getRoutingTable().get(destId) + neighbor.getPortTo(component).getConnection().getGbSecSpeed());
+                int distance = (int) ((neighbor.getRoutingTable().get(destId)) + (GB_MAX_SPEED - neighbor.getPortTo(component).getConnection().getGbSecSpeed()));
                 distances.put(destId, Math.min(distances.getOrDefault(destId, Integer.MAX_VALUE), distance));
             }
         }
@@ -105,7 +110,7 @@ public class RipAlgorithm implements INetworkLayerRoutingProtocol{
         return bestQueue;
     }
 
-    private int sumConnectionSpeed(Queue<Port> queue) {
+    protected int sumConnectionSpeed(Queue<Port> queue) {
         if (!queue.isEmpty()) {
             return queue.stream().mapToInt(port -> (int) port.getConnection().getGbSecSpeed()).sum();
         } else return Integer.MAX_VALUE;

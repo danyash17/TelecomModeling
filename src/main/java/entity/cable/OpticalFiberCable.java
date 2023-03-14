@@ -2,7 +2,7 @@ package entity.cable;
 
 public class OpticalFiberCable implements IFiber{
 
-    private static final double GB_SEC_SPEED = 40;
+    public static final double GB_SEC_SPEED = 40;
 
     public OpticalFiberCable() {
     }
