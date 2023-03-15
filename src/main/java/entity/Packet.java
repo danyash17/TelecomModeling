@@ -6,6 +6,9 @@ import java.util.Queue;
 import java.util.UUID;
 
 public class Packet {
+
+    private static final int WEIGHT_LIMIT = 8;
+
     private String id;
     private volatile Deque<Port> route;
     private boolean arrived;
@@ -57,6 +60,10 @@ public class Packet {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public long getVolumeBalancier() {
+        return (data.length() * 100) / WEIGHT_LIMIT;
     }
 
     @Override

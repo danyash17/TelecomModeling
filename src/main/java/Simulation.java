@@ -12,14 +12,14 @@ public class Simulation {
 
     //5 mins
     private static final long DEFAULT_TTL = 300000;
-    private static final long DEFAULT_STOP = 10;
+    private static final long DEFAULT_STOP = 5;
     private static IRandomGenerator generator;
     private static List<Router> routers;
     private static Destination testDestination;
 
     public static void main(String[] args) throws IOException, InterruptedException {
         //1 phase
-        Network network = new Network();
+        Network network = new Network(7);
         routers = new ArrayList<>();
         network.getNodes().forEach(node -> routers.add((Router) node));
         testDestination = new Destination(getRouterById(0), getRouterById(4));
@@ -34,6 +34,8 @@ public class Simulation {
         startSecondPhaseNetworkSimulation(network, destinations);
         Thread.sleep(3000);
         printLoad(routerLoad);
+        //3 phase
+        startThirdPhaseNetworkSimulation(network, destinations);
     }
 
     private static void startFirstPhaseNetworkSimulation(Network network, Map<Integer, Destination> destinations) throws InterruptedException {
@@ -44,7 +46,7 @@ public class Simulation {
             if (stop > DEFAULT_STOP){
                 active = false;
             }
-//            Thread.sleep((long) new ErlangRandomGenerator().generate());
+            Thread.sleep((long) new ErlangRandomGenerator().generate());
             Packet packet = new Packet("Message", DEFAULT_TTL);
 //            Collections.shuffle(copy);
 //            network.route(packet, copy.get(0), copy.get(1));
@@ -62,12 +64,19 @@ public class Simulation {
             if (stop > DEFAULT_STOP){
                 active = false;
             }
-//            Thread.sleep((long) new ErlangRandomGenerator().generate());
-            Packet packet = new Packet("Message", DEFAULT_TTL);
+            Thread.sleep((long) new ErlangRandomGenerator().generate());
+            Packet packet = new Packet("01234567", DEFAULT_TTL);
             Destination destination = destinations.get(stop);
             network.route(packet, destination.getSource(), destination.getTarget());
             stop++;
         }
+    }
+
+    private static void startThirdPhaseNetworkSimulation(Network network, Map<Integer, Destination> destinations) throws InterruptedException {
+        Thread.sleep((long) new ErlangRandomGenerator().generate());
+        Packet packet = new Packet("01234567012345670123456701234567012345670123456701234567", DEFAULT_TTL);
+        Destination destination = destinations.get(0);
+        network.route(packet, destination.getSource(), destination.getTarget());
     }
 
     private static void printLoad(Map<Router, Integer> routerLoad) {

@@ -28,12 +28,12 @@ public class Network {
         executorService = Executors.newFixedThreadPool((int) (new PoissonRandomGenerator().generate()+1));
     }
 
-    public Network(Map<Router, Integer> map) {
+    public Network(int users) {
         nodes = new HashSet<>();
         routingProtocols = new HashSet<>();
         initNetworkStructure();
-        routingProtocols.add(new AdvancedRipAlgorithm(getRouterNodes(), map));
-        executorService = Executors.newFixedThreadPool((int) (new PoissonRandomGenerator().generate()+1));
+        routingProtocols.add(new RipAlgorithm(getRouterNodes()));
+        executorService = Executors.newFixedThreadPool(users);
     }
 
     public List<Router> getRouterNodes(){

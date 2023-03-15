@@ -2,11 +2,9 @@ package entity;
 
 import generator.ExponentialRandomGenerator;
 import generator.IRandomGenerator;
-import generator.WeibullRandomGenerator;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.stream.IntStream;
 
 public class Router implements INetworkComposite {
 
@@ -68,6 +66,14 @@ public class Router implements INetworkComposite {
 
     public void setCrashed(boolean crashed) {
         this.crashed = crashed;
+    }
+
+    public double getDurability() {
+        return durability;
+    }
+
+    public void setDurability(double durability) {
+        this.durability = durability;
     }
 
     private void initPorts(int numberOfPorts) {
@@ -141,7 +147,7 @@ public class Router implements INetworkComposite {
         if (simulateCrashChance()) {
             return;
         }
-        packet.getRoute().poll().getConnection().transfer(packet);
+        packet.getRoute().poll().getConnection().transferForward(packet);
     }
 
     @Override

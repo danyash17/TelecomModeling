@@ -43,12 +43,21 @@ public class Connection {
         return cable.getGbSecSpeed();
     }
 
-    public void transfer(Packet packet) {
+    public void transferForward(Packet packet) {
         try {
             Thread.sleep((long) (MOCK_BEST_TRANSFER_TIME - getGbSecSpeed()));
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
         target.recieve(packet);
+    }
+
+    public void transferBackward(Packet packet) {
+        try {
+            Thread.sleep((long) (MOCK_BEST_TRANSFER_TIME - getGbSecSpeed()));
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        source.recieve(packet);
     }
 }
