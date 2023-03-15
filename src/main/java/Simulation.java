@@ -15,25 +15,24 @@ public class Simulation {
     private static final long DEFAULT_STOP = 5;
     private static IRandomGenerator generator;
     private static List<Router> routers;
-    private static Destination testDestination;
+    private static Destination staticDestination;
 
     public static void main(String[] args) throws IOException, InterruptedException {
         //1 phase
         Network network = new Network(7);
         routers = new ArrayList<>();
         network.getNodes().forEach(node -> routers.add((Router) node));
-        testDestination = new Destination(getRouterById(0), getRouterById(4));
+        staticDestination = new Destination(getRouterById(0), getRouterById(4));
         Map<Integer, Destination> destinations = new LinkedHashMap<>();
         startFirstPhaseNetworkSimulation(network, destinations);
         Thread.sleep(3000);
         Map<Router, Integer> routerLoad = new LinkedHashMap<>();
-        printLoad(routerLoad);
+        calculateAndPrintLoad(routerLoad);
         //2 phase
-        network.getRouterNodes().clear();
         network.getRoutingProtocols().add(new AdvancedRipAlgorithm(network.getRouterNodes(), routerLoad));
         startSecondPhaseNetworkSimulation(network, destinations);
         Thread.sleep(3000);
-        printLoad(routerLoad);
+        calculateAndPrintLoad(routerLoad);
         //3 phase
         startThirdPhaseNetworkSimulation(network, destinations);
     }
@@ -51,8 +50,8 @@ public class Simulation {
 //            Collections.shuffle(copy);
 //            network.route(packet, copy.get(0), copy.get(1));
 //            destinations.put(stop, new Destination(copy.get(0), copy.get(1)));
-            network.route(packet, testDestination.getSource(), testDestination.getTarget());
-            destinations.put(stop, new Destination(testDestination.getSource(), testDestination.getTarget()));
+            network.route(packet, staticDestination.getSource(), staticDestination.getTarget());
+            destinations.put(stop, new Destination(staticDestination.getSource(), staticDestination.getTarget()));
             stop++;
         }
     }
@@ -79,7 +78,7 @@ public class Simulation {
         network.route(packet, destination.getSource(), destination.getTarget());
     }
 
-    private static void printLoad(Map<Router, Integer> routerLoad) {
+    private static void calculateAndPrintLoad(Map<Router, Integer> routerLoad) {
         for (Router router:routers) {
             routerLoad.put(router,router.getLoad());
         }

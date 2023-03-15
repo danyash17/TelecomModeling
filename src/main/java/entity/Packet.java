@@ -63,7 +63,7 @@ public class Packet {
     }
 
     public long getVolumeBalancier() {
-        return (data.length() * 100) / WEIGHT_LIMIT;
+        return data.length() / WEIGHT_LIMIT;
     }
 
     @Override

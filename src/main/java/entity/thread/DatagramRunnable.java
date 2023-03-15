@@ -44,7 +44,7 @@ public class DatagramRunnable implements Runnable{
         }
         //arriving simulation
         try {
-            sleep((long) finishGenerators.get(new Random().nextInt(3)).generate());
+            sleep(pause + (long) finishGenerators.get(new Random().nextInt(3)).generate());
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
