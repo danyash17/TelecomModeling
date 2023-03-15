@@ -46,7 +46,7 @@ public class Simulation {
                 active = false;
             }
             Thread.sleep((long) new ErlangRandomGenerator().generate());
-            Packet packet = new Packet("Message", DEFAULT_TTL);
+            Packet packet = new Packet("01234567", DEFAULT_TTL);
 //            Collections.shuffle(copy);
 //            network.route(packet, copy.get(0), copy.get(1));
 //            destinations.put(stop, new Destination(copy.get(0), copy.get(1)));
