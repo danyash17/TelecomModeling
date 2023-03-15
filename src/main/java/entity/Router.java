@@ -147,7 +147,7 @@ public class Router implements INetworkComposite {
         if (simulateCrashChance()) {
             return;
         }
-        packet.getRoute().poll().getConnection().transferForward(packet);
+        packet.getRoute().poll().getConnection().transfer(packet);
     }
 
     @Override

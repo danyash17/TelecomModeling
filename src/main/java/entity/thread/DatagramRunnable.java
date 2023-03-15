@@ -27,7 +27,7 @@ public class DatagramRunnable implements Runnable{
         Port start = packet.getRoute().poll();
         Port end = packet.getRoute().peekLast();
         System.out.println(packet + " is starting its route from " + start.getRoot() + " to " + end.getConnection().getTarget().getRoot());
-        start.getConnection().transferForward(packet);
+        start.getConnection().transfer(packet);
         long startTime = System.nanoTime();
         long time;
         while (!packet.isArrived()){
